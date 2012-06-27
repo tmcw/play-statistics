@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>linear regression</title>
+        <style>
+            body {
+                background:#eee;
+                margin:0;
+                padding:0;
+                position:absolute;
+                bottom:0;
+                left:0;
+                right:0;
+                top:0;
+            }
+            #chart {
+                background:#000;
+            }
+            #chart svg {
+            }
+            circle.dot {
+                fill:#fff;
+                stroke-width:1;
+                stroke-opacity:0.5;
+                stroke:#FFFDD1;
+            }
+            path.linreg {
+                stroke-width:5;
+                stroke:#411934;
+            }
+            path.linreg-two {
+                stroke-width:2;
+                stroke-dasharray:5 4;
+                stroke:#FF91DC;
+            }
+            text {
+                fill:#fff;
+                font:15px/20px 'Helvetica Neue';
+                pointer-events:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id='chart'></div>
+        <script src='d3.v2.min.js'></script>
+        <script src='simple_statistics.js'></script>
+        <script>
+    var width = document.body.offsetWidth, height = document.body.offsetHeight;
+    var d = [];
+    var vis = d3.select("#chart")
+    .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    var x = d3.scale.linear()
+        .domain([0, width])
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .domain([0, height])
+        .range([0, height]);
+    var linreg = ss.linear_regression();
+
+    var dotsg = vis.append('g');
+
+    var fit = vis.append('path')
+        .attr('class', 'linreg');
+
+    var fit_two = vis.append('path')
+        .attr('class', 'linreg-two');
+
+    var r_indicator = vis.append('text')
+        .attr('class', 'r_squared')
+        .attr('x', 10)
+        .attr('y', 20);
+
+    function draw() {
+        linreg.data(d);
+        var dots = dotsg.selectAll('circle.dot')
+            .data(d)
+            .enter()
+            .append('circle')
+            .attr('class', 'dot')
+            .attr('r', 4)
+            .attr('cx', function(d) { return d[0]; })
+            .attr('cy', function(d) { return d[1]; });
+
+        var regression_line = linreg.line();
+        var path = [
+            x.domain()[0], regression_line(x.domain()[0]),
+            x.domain()[1], regression_line(x.domain()[1])
+            ];
+        fit.attr('d', function() { return 'M' + path; });
+        fit_two.attr('d', function() { return 'M' + path; });
+        r_indicator.text('r squared: ' + ss.r_squared(d, regression_line).toFixed(3));
+    }
+
+    var drawI;
+
+    d3.select(document.body).on('mousedown', function(e) {
+        d.push(d3.mouse(vis.node()));
+        draw();
+    });
+
+    d3.select(document.body).on('mousemove', function(e) {
+        if (d3.event.which > 0) {
+            d3.event.preventDefault();
+            d.push(d3.mouse(vis.node()));
+            draw();
+        }
+    });
+
+    d3.select(document.body).on('touchstart', function(e) {
+        d.push(d3.mouse(vis.node()));
+        draw();
+    });
+
+    d3.select(document.body).on('touchmove', function(e) {
+        d3.event.preventDefault();
+        d.push(d3.mouse(vis.node()));
+        draw();
+    });
+
+    draw();
+        </script>
+    </body>
+</html>
