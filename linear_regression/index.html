@@ -9,6 +9,7 @@
                 margin:0;
                 padding:0;
                 position:absolute;
+                overflow:hidden;
                 bottom:0;
                 left:0;
                 right:0;
@@ -100,7 +101,7 @@
     clear.append('rect')
         .attr('width', 50)
         .attr('height', 50)
-        .attr('x', width - 50)
+        .attr('x', width - 70)
         .attr('y', 0);
 
     var draw_cheer = vis.append('text')
@@ -109,7 +110,8 @@
         .attr('y', height / 2);
 
     clear.append('text')
-        .attr('x', width - 35)
+        .attr('x', width - 55)
+        .attr('width', 5)
         .attr('y', 35)
         .text('X');
 
