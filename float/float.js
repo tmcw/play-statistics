@@ -37,7 +37,7 @@ document.onmousemove = function(e) {
     if (dragging !== null) {
         pins[dragging].__data__ =
         Math.min(
-            Math.max((e.screenX - 20) / 640, 0),
+            Math.max((e.clientX - 20) / 640, 0),
             1);
         draw();
     }
